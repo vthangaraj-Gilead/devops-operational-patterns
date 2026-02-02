@@ -6,7 +6,7 @@ When an organization uses single source code for dev, tst and prod and some of t
 
 ## Why this happens
 
- - Count indexes resources - resource[0], resource[1], ...
+ - Count index resources - resource[0], resource[1], ...
  - Once deployed using count and if you want to remove the `count`,Terraform will remove the indexes from resource[0] --> resource, causing the resource to be destroyed and recreated
 
 ## Why this matters
@@ -30,5 +30,5 @@ Use `for_each` instead of `count`, when deploying resources for a single environ
 
 - `for_each` will identify resources based on key and not based on index positions. No need to recreate resources even if key changes.
 
-- When creating multiple expected resources in dev, tst & prod with same configurations using `count` is preffered as it reduces complexity
+- When creating multiple expected resources in dev, tst & prod with same configurations using `count` is preferred as it reduces complexity
 
