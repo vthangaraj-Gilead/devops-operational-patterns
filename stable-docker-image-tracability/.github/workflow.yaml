@@ -1,0 +1,75 @@
+name: Build and publish OCI image to ECR to Dev
+
+on:
+#  _________________________________
+# < ****** Please read this! ****** >
+#  ---------------------------------
+#         \   ^__^
+#          \  (oo)\_______
+#             (__)\       )\/\
+#                 ||----w |
+#                 ||     ||
+#
+# Uncomment the line below when you are ready for your workflows
+# to automatically trigger on `git push`.
+
+  # push:
+  #   branches:
+  #     - 'vt/*'   #Triggers on all branches
+
+# Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  docker:
+    #needs: Approval
+    uses: integration-workflow-docker/.github/workflows/workflow.yaml@v4.1.0
+    with:
+      image_tag: <app-name>-<env>-${{ github.run_number }}.${{ github.run_attempt }}                           # Tag to apply to Images created from the `main` branch
+      lob_account_id: <aws-account-id>           # AWS account number for self hosted runners
+      self_hosted_runner_extra_labels: 'INSTANCE_TYPE=t3a.xlarge'
+      path_to_dockerfile: Docker/BFXSequenceOptimizer/Dockerfile         # OPTIONAL: path to the Dockerfile (default = 'Dockerfile')
+      docker_build_dir: .             # OPTIONAL: path to the build dir (default = '.')
+      lifecycle_policy_file: policy.json   # OPTIONAL: path to the policy.json (default = 'policy.json')
+      mutable_repository: true
+      fail_build_on_vulnerability_found: false
+      whitespace_checker: false
+      additional_image_tags: "<app-name>-<env>-latest"
+    secrets: inherit
+  approval: ## new jobs for pinning stable version
+    name: Manual Approval for Production Stability
+    needs: docker
+    if: github.ref_name == github.event.repository.default_branch ##Only if run from master/main
+    runs-on: ubuntu-latest
+    environment: prod-approval
+    steps:
+      - name: Await approval
+        run: echo "Approve after verifying the application in production"
+  tag-prod-stable:
+    name: Mark Commit as prod-stable
+    needs: approval
+    runs-on: ubuntu-latest
+
+    # IMPORTANT: only tag commits from main (or master)
+    if: github.ref_name == github.event.repository.default_branch ##Only if run from master/main
+    steps:
+      - name: Checkout repository ## needed to checkout to master/main to get commit history to tag prod-stable
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 ## get all commit history
+
+      - name: Update prod-stable tag
+        run: |
+          git fetch --tags
+
+          # Delete local prod-stable tag if it exists
+          git tag -d prod-stable || true
+
+          # Delete remote prod-stable tag if it exists
+          git push origin :refs/tags/prod-stable || true
+
+          # Create new prod-stable tag on current commit
+          git tag prod-stable $GITHUB_SHA
+
+          # Push the new tag
+          git push origin prod-stable
