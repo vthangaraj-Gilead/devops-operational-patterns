@@ -37,3 +37,4 @@ When application breaks, user can rerun the docker workflow with Tag `Prod-Stabl
  - Not providing approval will result in new stable changes are not reflected in`Prod-Stable`
  - If docker build is successful but app breaks, Rejecting approval doesnt mean the current image tag will fix automatically, developers will still have to fix the code and rerun the pipeline
  - `Prod-Stable` will contain the last stable commit, if any changes are introduced, say workflow file(.github/workflow.yaml) is updated in the current main/master unless the pipeline is run against this main/master and provide approval to make sure the `Prod-Stable` contains the latest stable changes.
+ - Not parallel run is expected, if so the latest run approval wins i.e. the latest run changes will point to `Prod-Stable`
