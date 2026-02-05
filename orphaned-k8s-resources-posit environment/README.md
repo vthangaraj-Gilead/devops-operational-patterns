@@ -37,9 +37,8 @@ In AWS EKS Environments, for posit workbench applications (pod/user- session), o
 
 - Any session scoped Pods that is not running will be captured
 
-Upon comparing - label - job-name matches in pods, services, jobs
 
-### For Orphaned Services
+### For Orphaned Services - Upon comparing - label - job-name matches in pods, services, jobs
 
 - Any session scoped services whose job-name label matches with pod job-name label, its considered as active service in use
 - If the job-name label of service didn't match with pod we mark them as orphaed service
