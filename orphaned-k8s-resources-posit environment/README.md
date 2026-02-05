@@ -14,9 +14,10 @@ In AWS EKS Environments, for posit workbench applications (pod/user- session), o
 ## Why this matters
 
  - Let's assume user starts a new session in posit workbench, and quits the session, upon quit the pod status should be `Completed` and if these pods are not removed,it will still consume IP address, CPU/Memory
-    Solution: Set TTL in helm chart E.g.  job.ttlSecondsAfterFinished: 300 (After 5 minutes)
 
-- Another test case is if user session pod is not in running state - Pending, Error, Terminated, Completed - stil it needs to be monitored and removed if not needed.
+  `Solution`: Set TTL in helm chart E.g.  job.ttlSecondsAfterFinished: 300 (After 5 minutes)
+
+- Another test case is if user session pod is not in running state - Pending, Error, Terminated, Completed - still it needs to be monitored and removed if not needed.
 
 - Another test case - if a user clicks on new session in posit workbench - as described above, a new pod, job, svc is created , upon session completion, if svc is not removed and later a new session with same name is created then it leads to HTTP 502 Error
 
@@ -41,7 +42,7 @@ Upon comparing - label - job-name matches in pods, services, jobs
 ### For Orphaned Services
 
 - Any session scoped services whose job-name label matches with pod job-name label, its considered as active service in use
-- If the job-name label of service didnt match with pod we mark them as orphaed service
+- If the job-name label of service didn't match with pod we mark them as orphaed service
 
 ## Trade-Offs
 
