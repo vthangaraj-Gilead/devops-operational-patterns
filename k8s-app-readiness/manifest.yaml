@@ -1,0 +1,10 @@
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /health-check ## configure per app basis
+    port: 8787  ## configure per app basis
+  initialDelaySeconds: 10  ## No of seconds to wait before the first probe run
+  periodSeconds: 3 ## interval between one probe and another
+  timeoutSeconds: 1 ## No of seconds to wait to make it as failureif there is no response from app
+  successThreshold: 1 ## No of successful probes to make it as healthy
+  failureThreshold: 3 ## No of failure probes to mark the app pod to not receive traffic
