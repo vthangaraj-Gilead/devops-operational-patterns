@@ -30,7 +30,7 @@ When a image is being pulled,Kubernetes scheduler assigns a node, kubelet in tha
 
 ## Approach (One Possible direction)
 
-- Relocate containerd default storage from /var/lib/containerd to root ebs (/mnt/containerd)
+- Relocate containerd default storage from /var/lib/containerd to root ebs (/mnt/containerd) via ec2 launch template metadata script
 
 ## Trade-Offs
 
@@ -41,6 +41,6 @@ When a image is being pulled,Kubernetes scheduler assigns a node, kubelet in tha
 
 - Kubelet has a Feature `ImageGC - Garbage Collection`, upon specific threshold, kubelet automatically removes the old/unused images in least accessed order.(ImageGCHigh Threshold - 85%, ImageGCLowThreshold - 80%)
 
-- Occassionally run `crictl rmi --prune` to immediately remove unused images
+- Occassionally run `crictl rmi --prune` to immediately remove old/unused images
 
-- If images are stored in private registires e.g. ECR - perform nodegroup deletion and recreation to free up space.
+- If images are stored in private registires e.g. AWS ECR - perform nodegroup deletion and recreation to free up space. Because public registry image pulls fails sometimes due to request limits
